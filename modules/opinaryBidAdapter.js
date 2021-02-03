@@ -11,6 +11,10 @@ export const spec = {
     if (!deepAccess(bid, 'params.customer')) {
       return false;
     }
+    // either sponsored or editorial needs to be allowed
+    if (!deepAccess(bid, 'params.sponsored') && !deepAccess(bid, 'params.editorial')) {
+      return false;
+    }
     let sizes = parseSizesInput(bid.sizes);
     // currently opinary only supports 500x500
     if (sizes.filter(size => size == "500x500").length === 0) {
@@ -72,7 +76,10 @@ export const spec = {
       ttl: 360 // TODO
     };
 
-    let adm = `<iframe scrolling="no" frameborder="0" width="${fakeResponse.width}" height="${fakeResponse.height}" src="${body.pollURL}"></iframe>`;
+    // At Opinary we allow publishers to subscribe to voting events
+    const msgBridge = `onload="window.addEventListener('message', (event) => {window.parent.postMessage(event.data, '*');});"`;
+    
+    let adm = `<iframe ${msgBridge} scrolling="no" frameborder="0" width="${fakeResponse.width}" height="${fakeResponse.height}" src="${body.pollURL}"></iframe>`;
     let bid = {
       requestId: fakeResponse.requestId,
       cpm: fakeResponse.cpm,

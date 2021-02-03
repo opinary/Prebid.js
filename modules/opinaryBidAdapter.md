@@ -27,7 +27,9 @@ var adUnits = [
       bids: [{
          bidder: 'opinary',
          params: {
-           customer: 'focus'
+           customer: 'focus',
+           sponsored: true,
+           editorial: true
          }
        }]
    }
